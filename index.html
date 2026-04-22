@@ -35,44 +35,41 @@
     .card h2{font-size:18px;font-weight:800;color:#1a3c6e}
     .card .sub{font-size:13px;color:#64748b;line-height:1.5;margin-bottom:22px}
 
-    .confirm-box{background:#f0f7ff;border:1.5px solid #bfdbfe;border-radius:12px;padding:16px 18px;margin-bottom:20px}
-    .cb-label{font-size:11px;font-weight:700;color:#3b82f6;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px}
-    .cb-row{display:flex;align-items:center;gap:10px}
-    .cb-name{font-size:16px;font-weight:700;color:#1a202c}
-    .cb-email{font-size:12px;color:#64748b;margin-top:2px}
-    .not-you-btn{padding:6px 12px;background:#fff;border:1.5px solid #bfdbfe;border-radius:8px;font-size:12px;font-weight:600;color:#3b82f6;cursor:pointer;font-family:inherit;white-space:nowrap;flex-shrink:0}
-
-    .edit-panel{display:none;margin-top:12px;flex-direction:column;gap:8px}
-    .edit-panel input{width:100%;padding:10px 12px;border:1.5px solid #bfdbfe;border-radius:8px;font-size:14px;font-family:inherit;outline:none;color:#1a202c}
-    .edit-panel input:focus{border-color:#3b82f6}
-    .save-btn{width:100%;padding:11px;background:#3b82f6;color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit}
-
     .sec{font-size:10px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:.07em;margin:18px 0 8px;padding-top:16px;border-top:1px solid #f1f5f9}
-    label{display:block;font-size:12px;font-weight:600;color:#64748b;margin-bottom:5px}
-    .field{width:100%;padding:12px 14px;border:1.5px solid #e2e8f0;border-radius:10px;font-size:14px;color:#1a202c;outline:none;transition:border-color .2s;font-family:inherit}
+    .sec.first{margin-top:0;padding-top:0;border-top:none}
+
+    .field-label{display:block;font-size:13px;font-weight:700;color:#1a202c;margin-bottom:6px}
+    .field-label span{font-weight:400;color:#ef4444;margin-left:2px}
+
+    .field{width:100%;padding:13px 16px;border:2px solid #e2e8f0;border-radius:10px;font-size:15px;color:#1a202c;outline:none;transition:border-color .2s;font-family:inherit;background:#fff}
     .field:focus{border-color:#1a3c6e}
+    .field.highlight{border-color:#1a3c6e;background:#f0f7ff;font-weight:600;color:#1a3c6e;font-size:15px}
+    .field::placeholder{color:#94a3b8;font-weight:400}
+
+    .field-group{margin-bottom:14px}
 
     #docList{display:flex;flex-direction:column;gap:8px;margin-top:4px}
     .doc-row{display:flex;gap:8px;align-items:center}
-    .doc-row input{flex:1;padding:12px 14px;border:1.5px solid #e2e8f0;border-radius:10px;font-size:14px;color:#1a202c;outline:none;font-family:inherit}
+    .doc-row input{flex:1;padding:12px 14px;border:2px solid #e2e8f0;border-radius:10px;font-size:14px;color:#1a202c;outline:none;font-family:inherit;background:#fff}
     .doc-row input:focus{border-color:#1a3c6e}
     .rm{flex-shrink:0;width:32px;height:32px;border:none;background:#fee2e2;color:#ef4444;border-radius:8px;font-size:18px;cursor:pointer;font-family:inherit}
-    .add-doc{width:100%;padding:10px;background:#f8fafc;border:1.5px dashed #cbd5e1;border-radius:10px;color:#64748b;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;margin-top:8px}
+    .add-doc{width:100%;padding:10px;background:#f8fafc;border:2px dashed #cbd5e1;border-radius:10px;color:#64748b;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;margin-top:8px}
     .add-doc:hover{border-color:#1a3c6e;color:#1a3c6e}
-    .gen-btn{width:100%;padding:15px;background:#1a3c6e;color:#fff;border:none;border-radius:14px;font-size:16px;font-weight:700;cursor:pointer;font-family:inherit;margin-top:18px}
+    .gen-btn{width:100%;padding:16px;background:#1a3c6e;color:#fff;border:none;border-radius:14px;font-size:16px;font-weight:700;cursor:pointer;font-family:inherit;margin-top:18px;letter-spacing:.01em}
+    .gen-btn:hover{background:#15305a}
 
     /* RESULT */
     #resultBox{display:none}
     .result-card{background:#fff;border-radius:20px;padding:24px;box-shadow:0 4px 30px rgba(0,0,0,.08);display:flex;flex-direction:column;gap:14px}
-    .result-head{font-size:13px;font-weight:700;color:#16a34a}
+    .result-head{font-size:14px;font-weight:700;color:#16a34a}
     .hosted-note{font-size:11px;color:#92400e;background:#fffbeb;border:1px solid #fde68a;border-radius:8px;padding:10px 14px;line-height:1.5;display:none}
     .qr-wrap{display:flex;flex-direction:column;align-items:center;gap:10px;padding:20px;background:#f8fafc;border-radius:14px;border:1px solid #e2e8f0}
     .qr-lbl{font-size:12px;color:#64748b;font-weight:600}
-    .link-row{display:flex;gap:8px;align-items:center;background:#f8fafc;border:1.5px solid #e2e8f0;border-radius:10px;padding:10px 14px}
+    .link-row{display:flex;gap:8px;align-items:center;background:#f8fafc;border:2px solid #e2e8f0;border-radius:10px;padding:10px 14px}
     .link-txt{flex:1;font-size:11px;color:#64748b;word-break:break-all;font-family:monospace}
     .copy-btn{flex-shrink:0;padding:8px 14px;background:#1a3c6e;color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit}
     .wa-btn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:14px;background:#25D366;color:#fff;text-decoration:none;border-radius:12px;font-size:15px;font-weight:700}
-    .dl-btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:11px;background:#f8fafc;border:1.5px solid #e2e8f0;border-radius:12px;font-size:13px;font-weight:600;color:#1a3c6e;cursor:pointer;font-family:inherit}
+    .dl-btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:11px;background:#f8fafc;border:2px solid #e2e8f0;border-radius:12px;font-size:13px;font-weight:600;color:#1a3c6e;cursor:pointer;font-family:inherit}
 
     .toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(20px);background:#1a202c;color:#fff;padding:11px 22px;border-radius:100px;font-size:14px;font-weight:500;opacity:0;transition:all .3s;pointer-events:none;white-space:nowrap;z-index:999}
     .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
@@ -111,29 +108,29 @@
       </div>
       <h2>WhatsApp Migration</h2>
     </div>
-    <p class="sub">Confirm your details, enter the CBD ID and required documents, then share with your client.</p>
+    <p class="sub">Fill in your details, enter the CBD ID and required documents, then share the link or QR with your client.</p>
 
-    <!-- Identity confirm -->
-    <div class="confirm-box">
-      <div class="cb-label">Sending as</div>
-      <div class="cb-row">
-        <div style="flex:1">
-          <div class="cb-name" id="displayName">Anoop Shekhar</div>
-          <div class="cb-email" id="displayEmail">anoop.shekhar@afia.ae</div>
-        </div>
-        <button class="not-you-btn" onclick="toggleEdit()">Not you?</button>
-      </div>
-      <div class="edit-panel" id="editPanel">
-        <input type="text" id="nameInput" placeholder="Your full name"/>
-        <input type="email" id="emailInput" placeholder="your@email.com"/>
-        <button class="save-btn" onclick="saveDetails()">Save My Details</button>
-      </div>
+    <!-- ADVISOR DETAILS -->
+    <div class="sec first">Your Details</div>
+
+    <div class="field-group">
+      <label class="field-label">Your Name <span>*</span></label>
+      <input type="text" class="field" id="advName" placeholder="e.g. Anoop Shekhar"/>
     </div>
 
-    <div class="sec">CBD ID / Quote Number</div>
-    <label>CBD ID <span style="color:#94a3b8;font-weight:400">(optional)</span></label>
-    <input type="text" class="field" id="cbdId" placeholder="e.g. CBD-20045"/>
+    <div class="field-group">
+      <label class="field-label">Your Email Address <span>*</span></label>
+      <input type="email" class="field highlight" id="advEmail" placeholder="your@insurancemarket.ae"/>
+    </div>
 
+    <!-- CBD ID -->
+    <div class="sec">CBD ID / Quote Number</div>
+    <div class="field-group">
+      <label class="field-label">CBD ID <span style="color:#94a3b8;font-weight:400;font-size:12px">(optional — appears in subject line)</span></label>
+      <input type="text" class="field" id="cbdId" placeholder="e.g. CBD-20045"/>
+    </div>
+
+    <!-- DOCS -->
     <div class="sec">Documents Required from Client</div>
     <div id="docList">
       <div class="doc-row"><input type="text" placeholder="e.g. Emirates ID (front &amp; back)"/><button class="rm" onclick="removeDoc(this)">x</button></div>
@@ -141,17 +138,17 @@
       <div class="doc-row"><input type="text" placeholder="e.g. Visa copy"/><button class="rm" onclick="removeDoc(this)">x</button></div>
     </div>
     <button class="add-doc" onclick="addDoc()">+ Add document</button>
-    <button class="gen-btn" onclick="generateLink()">Generate Link &amp; QR</button>
+    <button class="gen-btn" onclick="generateLink()">Generate Link &amp; QR Code</button>
   </div>
 
   <div id="resultBox">
     <div class="result-card">
-      <div class="result-head">Ready to share with client</div>
-      <div class="hosted-note" id="hostedNote">Running in preview - host this file on Netlify to get a real URL for the QR code.</div>
+      <div class="result-head">✅ Ready to share with client</div>
+      <div class="hosted-note" id="hostedNote">Running in preview - host on Netlify to get a real URL.</div>
       <div class="qr-wrap">
         <div class="qr-lbl">Client scans to open email instantly</div>
         <div id="qrcode"></div>
-        <button class="dl-btn" onclick="downloadQR()">Download QR Code</button>
+        <button class="dl-btn" onclick="downloadQR()">⬇ Download QR Code</button>
       </div>
       <div class="link-row">
         <span class="link-txt" id="generatedLink">-</span>
@@ -168,9 +165,7 @@
 <div class="toast" id="toast"></div>
 
 <script>
-  var ADVISOR_EMAIL = 'anoop.shekhar@afia.ae';
   var CC = 'thisisanoopshekhar89@gmail.com,jake.romasanta@insurancemarket.ae,tausif.memon@insurancemarket.ae';
-  var advisorName = 'Anoop Shekhar';
 
   function getPageURL() {
     var loc = window.location;
@@ -238,32 +233,6 @@
     document.getElementById('advisorView').style.display = 'flex';
   }
 
-  // Not you? toggle - shows name + email fields
-  function toggleEdit() {
-    var panel = document.getElementById('editPanel');
-    var open = panel.style.display === 'flex';
-    panel.style.display = open ? 'none' : 'flex';
-    if (!open) {
-      document.getElementById('nameInput').value  = advisorName;
-      document.getElementById('emailInput').value = ADVISOR_EMAIL;
-      document.getElementById('nameInput').focus();
-    }
-  }
-
-  function saveDetails() {
-    var name  = document.getElementById('nameInput').value.trim();
-    var email = document.getElementById('emailInput').value.trim();
-    if (!name)                { showToast('Please enter your name'); return; }
-    if (!email.includes('@')) { showToast('Please enter a valid email'); return; }
-    advisorName   = name;
-    ADVISOR_EMAIL = email;
-    document.getElementById('displayName').textContent  = name;
-    document.getElementById('displayEmail').textContent = email;
-    document.getElementById('editPanel').style.display  = 'none';
-    showToast('Details updated');
-  }
-
-  // Docs
   function addDoc() {
     var row = document.createElement('div');
     row.className = 'doc-row';
@@ -276,9 +245,14 @@
     else showToast('Keep at least one field');
   }
 
-  // Generate
   function generateLink() {
-    var cbd  = document.getElementById('cbdId').value.trim();
+    var name  = document.getElementById('advName').value.trim();
+    var email = document.getElementById('advEmail').value.trim();
+    var cbd   = document.getElementById('cbdId').value.trim();
+
+    if (!name)                { showToast('Please enter your name'); return; }
+    if (!email.includes('@')) { showToast('Please enter your email address'); return; }
+
     var docs = [];
     document.querySelectorAll('#docList .doc-row input').forEach(function(inp) {
       var v = inp.value.trim(); if (v) docs.push(v);
@@ -289,8 +263,8 @@
     var base      = pageURL || 'YOUR_HOSTED_URL';
 
     var url = base
-      + '?e=' + btoa(ADVISOR_EMAIL)
-      + '&n=' + encodeURIComponent(advisorName)
+      + '?e=' + btoa(email)
+      + '&n=' + encodeURIComponent(name)
       + (cbd ? '&c=' + encodeURIComponent(cbd) : '')
       + (docs.length ? '&d=' + encodeURIComponent(docs.join('||')) : '');
 
