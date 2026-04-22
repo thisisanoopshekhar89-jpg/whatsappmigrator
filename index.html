@@ -81,9 +81,8 @@
 <div id="clientView">
   <div class="logo">Insurance Market</div>
   <div class="from-card">
-    <div class="lbl">Your Advisor</div>
-    <div class="nm" id="c_name">-</div>
-    <div class="em" id="c_email">-</div>
+    <div class="lbl">Replies go to your advisor</div>
+    <div class="nm" id="c_email" style="font-size:14px;word-break:break-all;">-</div>
   </div>
   <button class="send-btn" id="mailBtn">
     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -91,7 +90,20 @@
     </svg>
     Send Your Documents
   </button>
-  <p class="hint">Tap above - your email opens pre-filled.<br/>Attach your documents and hit Send.</p>
+  <p class="hint">Tap above - choose your email app.<br/>Attach your documents and hit Send.</p>
+
+  <!-- Email choice popup -->
+  <div id="emailChoiceBox" style="display:none;flex-direction:column;gap:10px;width:100%;background:#fff;border:1.5px solid #e2e8f0;border-radius:16px;padding:20px;">
+    <p style="font-size:13px;font-weight:700;color:#1a202c;text-align:left;">Open with:</p>
+    <button id="gmailBtn" style="display:flex;align-items:center;gap:12px;padding:14px 18px;background:#fff;border:2px solid #e2e8f0;border-radius:12px;font-size:15px;font-weight:600;color:#1a202c;cursor:pointer;font-family:inherit;width:100%;">
+      <img src="https://www.google.com/gmail/about/static/images/logo-gmail.png" style="width:24px;height:24px;object-fit:contain;" onerror="this.style.display='none'"/>
+      Gmail (opens in browser)
+    </button>
+    <button id="outlookBtn" style="display:flex;align-items:center;gap:12px;padding:14px 18px;background:#fff;border:2px solid #e2e8f0;border-radius:12px;font-size:15px;font-weight:600;color:#1a202c;cursor:pointer;font-family:inherit;width:100%;">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1a3c6e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><polyline points="22,4 12,13 2,4"/></svg>
+      Outlook / Mail App
+    </button>
+  </div>
   <div class="req-docs" id="reqDocsBox" style="display:none">
     <div class="lbl">Documents required from you</div>
     <ul id="reqDocsList"></ul>
@@ -112,11 +124,6 @@
 
     <!-- ADVISOR DETAILS -->
     <div class="sec first">Your Details</div>
-
-    <div class="field-group">
-      <label class="field-label">Your Name <span>*</span></label>
-      <input type="text" class="field" id="advName" placeholder="e.g. Anoop Shekhar"/>
-    </div>
 
     <div class="field-group">
       <label class="field-label">Your Email Address <span>*</span></label>
@@ -197,20 +204,22 @@
       var docsRaw  = getParam('d') ? decodeURIComponent(getParam('d')) : '';
       var docs     = docsRaw ? docsRaw.split('||').filter(Boolean) : [];
 
-      document.getElementById('c_name').textContent  = dispName;
       document.getElementById('c_email').textContent = toEmail;
 
-      var subject = cbd ? 'CBD ID: ' + cbd : 'Document Submission';
+      var subject = cbd ? cbd : 'WhatsApp to Email Migration';
 
       var docLines = docs.length
         ? docs.map(function(d, i){ return (i+1) + '. ' + d; }).join('\n')
         : '- Please attach all required documents';
 
-      var body = 'Dear ' + dispName + ',\n\n'
-        + 'For our data protection compliance, we are migrating to email only for official documents and transaction-related queries.\n\n'
-        + 'Please find attached the required documents as follows:\n\n'
+      var body = 'Hello,\n\n'
+        + 'Thank you for moving your communication with us to email — this helps us serve you better and keep your documents safe and on record.\n\n'
+        + 'To proceed with your policy, please reply to this email with the following documents attached:\n\n'
         + docLines + '\n\n'
-        + 'Thank you.\n\nWarm regards';
+        + 'Once we receive your documents, our team will review and get back to you promptly.\n\n'
+        + 'Should you have any questions, simply reply to this email.\n\n'
+        + 'Warm regards,\n'
+        + dispName;
 
       if (docs.length) {
         var ul = document.getElementById('reqDocsList');
@@ -227,7 +236,36 @@
         + '&subject=' + encodeURIComponent(subject)
         + '&body=' + encodeURIComponent(body);
 
-      document.getElementById('mailBtn').onclick = function() { window.location.href = mailto; };
+      // Gmail web fallback for PC users
+      var gmailUrl = 'https://mail.google.com/mail/?view=cm'
+        + '&to=' + encodeURIComponent(toEmail)
+        + '&cc=' + encodeURIComponent(CC)
+        + '&su=' + encodeURIComponent(subject)
+        + '&body=' + encodeURIComponent(body);
+
+      document.getElementById('mailBtn').onclick = function() {
+        // Try mailto first (works on phone + PC with Outlook)
+        var iframe = document.createElement('iframe');
+        iframe.style.display = 'none';
+        document.body.appendChild(iframe);
+        iframe.src = mailto;
+
+        // Show choice after short delay
+        setTimeout(function() {
+          document.body.removeChild(iframe);
+          document.getElementById('emailChoiceBox').style.display = 'flex';
+        }, 800);
+      };
+
+      // Gmail button
+      document.getElementById('gmailBtn').onclick = function() {
+        window.open(gmailUrl, '_blank');
+      };
+
+      // Outlook/mail app button
+      document.getElementById('outlookBtn').onclick = function() {
+        window.location.href = mailto;
+      };
     } catch(e) { console.error(e); }
   } else {
     document.getElementById('advisorView').style.display = 'flex';
@@ -246,11 +284,10 @@
   }
 
   function generateLink() {
-    var name  = document.getElementById('advName').value.trim();
+    var name  = document.getElementById('advEmail').value.trim().split('@')[0];
     var email = document.getElementById('advEmail').value.trim();
     var cbd   = document.getElementById('cbdId').value.trim();
 
-    if (!name)                { showToast('Please enter your name'); return; }
     if (!email.includes('@')) { showToast('Please enter your email address'); return; }
 
     var docs = [];
@@ -264,7 +301,7 @@
 
     var url = base
       + '?e=' + btoa(email)
-      + '&n=' + encodeURIComponent(name)
+      + '&n=' + encodeURIComponent(email)
       + (cbd ? '&c=' + encodeURIComponent(cbd) : '')
       + (docs.length ? '&d=' + encodeURIComponent(docs.join('||')) : '');
 
