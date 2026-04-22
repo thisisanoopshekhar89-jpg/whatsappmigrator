@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>WhatsApp Migration</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{min-height:100vh;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f0f4f8;display:flex;align-items:center;justify-content:center;padding:24px 16px}
+
+    /* CLIENT */
+    #clientView{display:none;flex-direction:column;align-items:center;gap:14px;max-width:360px;width:100%;text-align:center}
+    .logo{font-size:12px;font-weight:800;color:#1a3c6e;letter-spacing:.08em;text-transform:uppercase;opacity:.7}
+    .from-card{background:#fff;border:1px solid #e2e8f0;border-radius:14px;padding:14px 20px;width:100%;text-align:left}
+    .from-card .lbl{font-size:10px;color:#94a3b8;text-transform:uppercase;letter-spacing:.07em;margin-bottom:3px}
+    .from-card .nm{font-size:16px;font-weight:700;color:#1a202c}
+    .from-card .em{font-size:12px;color:#64748b;margin-top:2px}
+    .send-btn{display:flex;align-items:center;justify-content:center;gap:12px;background:#1a3c6e;color:#fff;font-size:17px;font-weight:700;padding:20px 28px;border-radius:16px;box-shadow:0 6px 24px rgba(26,60,110,.35);width:100%;transition:transform .15s;cursor:pointer;border:none;font-family:inherit}
+    .send-btn:active{transform:scale(.97)}
+    .hint{font-size:12px;color:#94a3b8;line-height:1.6}
+    .req-docs{background:#fff;border:1px solid #e2e8f0;border-radius:14px;padding:16px 20px;width:100%;text-align:left}
+    .req-docs .lbl{font-size:10px;color:#94a3b8;text-transform:uppercase;letter-spacing:.07em;margin-bottom:10px}
+    .req-docs ul{list-style:none}
+    .req-docs ul li{font-size:14px;color:#374151;padding:6px 0;border-bottom:1px solid #f1f5f9;display:flex;align-items:flex-start;gap:8px}
+    .req-docs ul li:last-child{border-bottom:none}
+    .req-docs ul li::before{content:'📎';font-size:12px;margin-top:2px;flex-shrink:0}
+    .adv-toggle{font-size:11px;color:#cbd5e1;cursor:pointer;margin-top:2px}
+
+    /* ADVISOR */
+    #advisorView{display:none;flex-direction:column;gap:14px;max-width:460px;width:100%}
+    .card{background:#fff;border-radius:20px;padding:28px 24px;box-shadow:0 4px 30px rgba(0,0,0,.08)}
+    .card-header{display:flex;align-items:center;gap:12px;margin-bottom:6px}
+    .wa-icon-wrap{width:42px;height:42px;background:#25D366;border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+    .card h2{font-size:18px;font-weight:800;color:#1a3c6e}
+    .card .sub{font-size:13px;color:#64748b;line-height:1.5;margin-bottom:22px}
+
+    .sec{font-size:10px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:.07em;margin:18px 0 8px;padding-top:16px;border-top:1px solid #f1f5f9}
+    .sec.first{margin-top:0;padding-top:0;border-top:none}
+
+    .field-label{display:block;font-size:13px;font-weight:700;color:#1a202c;margin-bottom:6px}
+    .field-label span{font-weight:400;color:#ef4444;margin-left:2px}
+
+    .field{width:100%;padding:13px 16px;border:2px solid #e2e8f0;border-radius:10px;font-size:15px;color:#1a202c;outline:none;transition:border-color .2s;font-family:inherit;background:#fff}
+    .field:focus{border-color:#1a3c6e}
+    .field.highlight{border-color:#1a3c6e;background:#f0f7ff;font-weight:600;color:#1a3c6e;font-size:15px}
+    .field::placeholder{color:#94a3b8;font-weight:400}
+
+    .field-group{margin-bottom:14px}
+
+    #docList{display:flex;flex-direction:column;gap:8px;margin-top:4px}
+    .doc-row{display:flex;gap:8px;align-items:center}
+    .doc-row input{flex:1;padding:12px 14px;border:2px solid #e2e8f0;border-radius:10px;font-size:14px;color:#1a202c;outline:none;font-family:inherit;background:#fff}
+    .doc-row input:focus{border-color:#1a3c6e}
+    .rm{flex-shrink:0;width:32px;height:32px;border:none;background:#fee2e2;color:#ef4444;border-radius:8px;font-size:18px;cursor:pointer;font-family:inherit}
+    .add-doc{width:100%;padding:10px;background:#f8fafc;border:2px dashed #cbd5e1;border-radius:10px;color:#64748b;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;margin-top:8px}
+    .add-doc:hover{border-color:#1a3c6e;color:#1a3c6e}
+    .gen-btn{width:100%;padding:16px;background:#1a3c6e;color:#fff;border:none;border-radius:14px;font-size:16px;font-weight:700;cursor:pointer;font-family:inherit;margin-top:18px;letter-spacing:.01em}
+    .gen-btn:hover{background:#15305a}
+
+    /* RESULT */
+    #resultBox{display:none}
+    .result-card{background:#fff;border-radius:20px;padding:24px;box-shadow:0 4px 30px rgba(0,0,0,.08);display:flex;flex-direction:column;gap:14px}
+    .result-head{font-size:14px;font-weight:700;color:#16a34a}
+    .hosted-note{font-size:11px;color:#92400e;background:#fffbeb;border:1px solid #fde68a;border-radius:8px;padding:10px 14px;line-height:1.5;display:none}
+    .qr-wrap{display:flex;flex-direction:column;align-items:center;gap:10px;padding:20px;background:#f8fafc;border-radius:14px;border:1px solid #e2e8f0}
+    .qr-lbl{font-size:12px;color:#64748b;font-weight:600}
+    .link-row{display:flex;gap:8px;align-items:center;background:#f8fafc;border:2px solid #e2e8f0;border-radius:10px;padding:10px 14px}
+    .link-txt{flex:1;font-size:11px;color:#64748b;word-break:break-all;font-family:monospace}
+    .copy-btn{flex-shrink:0;padding:8px 14px;background:#1a3c6e;color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit}
+    .wa-btn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:14px;background:#25D366;color:#fff;text-decoration:none;border-radius:12px;font-size:15px;font-weight:700}
+    .dl-btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:11px;background:#f8fafc;border:2px solid #e2e8f0;border-radius:12px;font-size:13px;font-weight:600;color:#1a3c6e;cursor:pointer;font-family:inherit}
+
+    .toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(20px);background:#1a202c;color:#fff;padding:11px 22px;border-radius:100px;font-size:14px;font-weight:500;opacity:0;transition:all .3s;pointer-events:none;white-space:nowrap;z-index:999}
+    .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  </style>
+</head>
+<body>
+
+<!-- CLIENT VIEW -->
+<div id="clientView">
+  <div class="logo">Insurance Market</div>
+  <div class="from-card">
+    <div class="lbl">Replies go to your advisor</div>
+    <div class="nm" id="c_email" style="font-size:14px;word-break:break-all;">-</div>
+  </div>
+  <button class="send-btn" id="mailBtn">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="2" y="4" width="20" height="16" rx="2"/><polyline points="22,4 12,13 2,4"/>
+    </svg>
+    Send Your Documents
+  </button>
+  <p class="hint">Tap above - choose your email app.<br/>Attach your documents and hit Send.</p>
+
+  <!-- Email choice popup -->
+  <div id="emailChoiceBox" style="display:none;flex-direction:column;gap:10px;width:100%;background:#fff;border:1.5px solid #e2e8f0;border-radius:16px;padding:20px;">
+    <p style="font-size:13px;font-weight:700;color:#1a202c;text-align:left;">Open with:</p>
+    <button id="gmailBtn" style="display:flex;align-items:center;gap:12px;padding:14px 18px;background:#fff;border:2px solid #e2e8f0;border-radius:12px;font-size:15px;font-weight:600;color:#1a202c;cursor:pointer;font-family:inherit;width:100%;">
+      <img src="https://www.google.com/gmail/about/static/images/logo-gmail.png" style="width:24px;height:24px;object-fit:contain;" onerror="this.style.display='none'"/>
+      Gmail (opens in browser)
+    </button>
+    <button id="outlookBtn" style="display:flex;align-items:center;gap:12px;padding:14px 18px;background:#fff;border:2px solid #e2e8f0;border-radius:12px;font-size:15px;font-weight:600;color:#1a202c;cursor:pointer;font-family:inherit;width:100%;">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1a3c6e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><polyline points="22,4 12,13 2,4"/></svg>
+      Outlook / Mail App
+    </button>
+  </div>
+  <div class="req-docs" id="reqDocsBox" style="display:none">
+    <div class="lbl">Documents required from you</div>
+    <ul id="reqDocsList"></ul>
+  </div>
+  <div class="adv-toggle" onclick="showAdvisor()">I'm an advisor</div>
+</div>
+
+<!-- ADVISOR VIEW -->
+<div id="advisorView">
+  <div class="card">
+    <div class="card-header">
+      <div class="wa-icon-wrap">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+      </div>
+      <h2>WhatsApp Migration</h2>
+    </div>
+    <p class="sub">Fill in your details, enter the CBD ID and required documents, then share the link or QR with your client.</p>
+
+    <!-- ADVISOR DETAILS -->
+    <div class="sec first">Your Details</div>
+
+    <div class="field-group">
+      <label class="field-label">Your Email Address <span>*</span></label>
+      <input type="email" class="field highlight" id="advEmail" placeholder="your@insurancemarket.ae"/>
+    </div>
+
+    <!-- CBD ID -->
+    <div class="sec">CBD ID / Quote Number</div>
+    <div class="field-group">
+      <label class="field-label">CBD ID <span style="color:#94a3b8;font-weight:400;font-size:12px">(optional — appears in subject line)</span></label>
+      <input type="text" class="field" id="cbdId" placeholder="e.g. CBD-20045"/>
+    </div>
+
+    <!-- DOCS -->
+    <div class="sec">Documents Required from Client</div>
+    <div id="docList">
+      <div class="doc-row"><input type="text" placeholder="e.g. Emirates ID (front &amp; back)"/><button class="rm" onclick="removeDoc(this)">x</button></div>
+      <div class="doc-row"><input type="text" placeholder="e.g. Passport copy"/><button class="rm" onclick="removeDoc(this)">x</button></div>
+      <div class="doc-row"><input type="text" placeholder="e.g. Visa copy"/><button class="rm" onclick="removeDoc(this)">x</button></div>
+    </div>
+    <button class="add-doc" onclick="addDoc()">+ Add document</button>
+    <button class="gen-btn" onclick="generateLink()">Generate Link &amp; QR Code</button>
+  </div>
+
+  <div id="resultBox">
+    <div class="result-card">
+      <div class="result-head">✅ Ready to share with client</div>
+      <div class="hosted-note" id="hostedNote">Running in preview - host on Netlify to get a real URL.</div>
+      <div class="qr-wrap">
+        <div class="qr-lbl">Client scans to open email instantly</div>
+        <div id="qrcode"></div>
+        <button class="dl-btn" onclick="downloadQR()">⬇ Download QR Code</button>
+      </div>
+      <div class="link-row">
+        <span class="link-txt" id="generatedLink">-</span>
+        <button class="copy-btn" onclick="copyLink()">Copy</button>
+      </div>
+      <a class="wa-btn" id="waShareBtn" href="#" target="_blank">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+        Share on WhatsApp
+      </a>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  var CC = 'thisisanoopshekhar89@gmail.com,jake.romasanta@insurancemarket.ae,tausif.memon@insurancemarket.ae';
+
+  function getPageURL() {
+    var loc = window.location;
+    if (!loc.origin || loc.origin === 'null' || loc.href.indexOf('about:') === 0) return null;
+    return loc.origin + loc.pathname;
+  }
+
+  function getParam(p) {
+    var v = new URLSearchParams(window.location.search).get(p);
+    if (v !== null) return v;
+    var h = window.location.hash;
+    if (h.indexOf('?') !== -1) return new URLSearchParams(h.split('?')[1]).get(p);
+    return null;
+  }
+
+  function showAdvisor() {
+    document.getElementById('clientView').style.display = 'none';
+    document.getElementById('advisorView').style.display = 'flex';
+  }
+
+  // Route
+  var ep = getParam('e');
+  if (ep) {
+    document.getElementById('clientView').style.display = 'flex';
+    try {
+      var toEmail  = atob(ep);
+      var dispName = decodeURIComponent(getParam('n') || 'Your Advisor');
+      var cbd      = getParam('c') ? decodeURIComponent(getParam('c')) : '';
+      var docsRaw  = getParam('d') ? decodeURIComponent(getParam('d')) : '';
+      var docs     = docsRaw ? docsRaw.split('||').filter(Boolean) : [];
+
+      document.getElementById('c_email').textContent = toEmail;
+
+      var subject = cbd ? cbd : 'WhatsApp to Email Migration';
+
+      var docLines = docs.length
+        ? docs.map(function(d, i){ return (i+1) + '. ' + d; }).join('\n')
+        : '- Please attach all required documents';
+
+      var body = 'Hello,\n\n'
+        + 'Thank you for moving your communication with us to email — this helps us serve you better and keep your documents safe and on record.\n\n'
+        + 'To proceed with your policy, please reply to this email with the following documents attached:\n\n'
+        + docLines + '\n\n'
+        + 'Once we receive your documents, our team will review and get back to you promptly.\n\n'
+        + 'Should you have any questions, simply reply to this email.\n\n'
+        + 'Warm regards,\n'
+        + dispName;
+
+      if (docs.length) {
+        var ul = document.getElementById('reqDocsList');
+        docs.forEach(function(d) {
+          var li = document.createElement('li');
+          li.textContent = d;
+          ul.appendChild(li);
+        });
+        document.getElementById('reqDocsBox').style.display = 'block';
+      }
+
+      var mailto = 'mailto:' + toEmail
+        + '?cc=' + encodeURIComponent(CC)
+        + '&subject=' + encodeURIComponent(subject)
+        + '&body=' + encodeURIComponent(body);
+
+      // Gmail web fallback for PC users
+      var gmailUrl = 'https://mail.google.com/mail/?view=cm'
+        + '&to=' + encodeURIComponent(toEmail)
+        + '&cc=' + encodeURIComponent(CC)
+        + '&su=' + encodeURIComponent(subject)
+        + '&body=' + encodeURIComponent(body);
+
+      document.getElementById('mailBtn').onclick = function() {
+        // Try mailto first (works on phone + PC with Outlook)
+        var iframe = document.createElement('iframe');
+        iframe.style.display = 'none';
+        document.body.appendChild(iframe);
+        iframe.src = mailto;
+
+        // Show choice after short delay
+        setTimeout(function() {
+          document.body.removeChild(iframe);
+          document.getElementById('emailChoiceBox').style.display = 'flex';
+        }, 800);
+      };
+
+      // Gmail button
+      document.getElementById('gmailBtn').onclick = function() {
+        window.open(gmailUrl, '_blank');
+      };
+
+      // Outlook/mail app button
+      document.getElementById('outlookBtn').onclick = function() {
+        window.location.href = mailto;
+      };
+    } catch(e) { console.error(e); }
+  } else {
+    document.getElementById('advisorView').style.display = 'flex';
+  }
+
+  function addDoc() {
+    var row = document.createElement('div');
+    row.className = 'doc-row';
+    row.innerHTML = '<input type="text" placeholder="Document name"/><button class="rm" onclick="removeDoc(this)">x</button>';
+    document.getElementById('docList').appendChild(row);
+  }
+
+  function removeDoc(btn) {
+    if (document.querySelectorAll('#docList .doc-row').length > 1) btn.parentElement.remove();
+    else showToast('Keep at least one field');
+  }
+
+  function generateLink() {
+    var name  = document.getElementById('advEmail').value.trim().split('@')[0];
+    var email = document.getElementById('advEmail').value.trim();
+    var cbd   = document.getElementById('cbdId').value.trim();
+
+    if (!email.includes('@')) { showToast('Please enter your email address'); return; }
+
+    var docs = [];
+    document.querySelectorAll('#docList .doc-row input').forEach(function(inp) {
+      var v = inp.value.trim(); if (v) docs.push(v);
+    });
+
+    var pageURL   = getPageURL();
+    var isPreview = !pageURL;
+    var base      = pageURL || 'YOUR_HOSTED_URL';
+
+    var url = base
+      + '?e=' + btoa(email)
+      + '&n=' + encodeURIComponent(email)
+      + (cbd ? '&c=' + encodeURIComponent(cbd) : '')
+      + (docs.length ? '&d=' + encodeURIComponent(docs.join('||')) : '');
+
+    document.getElementById('generatedLink').textContent = url;
+    document.getElementById('resultBox').style.display   = 'block';
+    document.getElementById('hostedNote').style.display  = isPreview ? 'block' : 'none';
+
+    var qrDiv = document.getElementById('qrcode');
+    qrDiv.innerHTML = '';
+    new QRCode(qrDiv, { text: url, width: 200, height: 200, colorDark: '#1a3c6e', colorLight: '#ffffff', correctLevel: QRCode.CorrectLevel.M });
+
+    var waMsg = 'Hi! To send your documents securely by email, please tap the link below\n\n' + url + '\n\nYour email will open ready to go - just attach the required documents and hit Send';
+    document.getElementById('waShareBtn').href = 'https://wa.me/?text=' + encodeURIComponent(waMsg);
+
+    setTimeout(function() { document.getElementById('resultBox').scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 150);
+  }
+
+  function copyLink() {
+    var url = document.getElementById('generatedLink').textContent;
+    navigator.clipboard.writeText(url).then(function() {
+      showToast('Copied - paste on WhatsApp!');
+    }).catch(function() {
+      var el = document.createElement('textarea');
+      el.value = url; document.body.appendChild(el); el.select();
+      document.execCommand('copy'); document.body.removeChild(el);
+      showToast('Copied!');
+    });
+  }
+
+  function downloadQR() {
+    var canvas = document.querySelector('#qrcode canvas');
+    if (!canvas) { showToast('QR not ready'); return; }
+    var a = document.createElement('a');
+    a.download = 'document-request-qr.png';
+    a.href = canvas.toDataURL('image/png');
+    a.click();
+    showToast('QR downloaded');
+  }
+
+  function showToast(msg) {
+    var t = document.getElementById('toast');
+    t.textContent = msg; t.classList.add('show');
+    setTimeout(function() { t.classList.remove('show'); }, 3000);
+  }
+</script>
+</body>
+</html>
